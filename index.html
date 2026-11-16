@@ -2,7 +2,9 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#efe5d2">\n<link rel="manifest" href="./manifest.webmanifest">\n<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="theme-color" content="#efe5d2">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <title>Il quaderno delle idee</title>
 <style>
 :root{--paper:#f5eedf;--paper2:#fffaf0;--ink:#493b2c;--muted:#897963;--olive:#687451;--line:#dfd2bc;--rust:#a96e4c;--shadow:0 8px 28px #57452a14}
@@ -39,13 +41,50 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#493b2c;color:#fff;padding:11px 16px;border-radius:99px;font:13px Arial;display:none;max-width:90vw}
 small{font:12px Arial;color:var(--muted)}
 @media(min-width:650px){main{padding:26px 28px 50px}header{padding:36px}}
+
+
+/* Edizione libro, prima fase */
+:root{--paper:#f7f0df;--paper2:#fffaf1;--ink:#493b2c;--olive:#788b70;--line:#ded0b8;--rust:#b6817d}
+body{background:#d8d2bf}
+.app{max-width:1180px;min-height:100vh;background:transparent;box-shadow:none}
+.book-cover{min-height:calc(100dvh - 32px);display:flex;align-items:center;justify-content:center;padding:25px}
+.cover-face{position:relative;width:min(580px,92vw);min-height: min(740px,82dvh);border-radius:10px 22px 22px 10px;border:12px double #b4a37f;box-shadow:inset 0 0 0 12px #e8dfc8,14px 18px 35px #42382d55;background:linear-gradient(145deg,#dbe5d3,#e8e1c8 48%,#d7c8b9);padding:75px 38px 55px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;color:#4d4936;cursor:pointer}
+.cover-face:before{content:'❧  ✿  ❧';position:absolute;top:34px;font-size:30px;color:#89977d;letter-spacing:15px}
+.cover-face h1{font-size:clamp(37px,6vw,65px);line-height:1.1;margin:0}
+.cover-face .subtitle{font-size:clamp(16px,2vw,23px);color:#776b5b}
+.cover-face .author{position:absolute;bottom:30px;right:32px;font-size:18px;font-style:italic}
+.cover-face .cover-ornament{font-size:clamp(45px,7vw,72px);color:#9b856a}
+.cover-face .open-hint{font:12px Arial,sans-serif;letter-spacing:1.5px;text-transform:uppercase}
+.book-shell{display:none;padding:24px 12px 30px;min-height:100dvh}
+.book-shell.open{display:block;animation:bookReveal .5s ease-out}
+@keyframes bookReveal{from{opacity:.3;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.book-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px;padding:0 8px}
+.book-toolbar button{border:1px solid #b5aa94;background:#fff9ed;border-radius:20px;padding:9px 15px;color:#493b2c}
+.book-toolbar .book-name{font-style:italic;font-size:20px}
+.book-pages{display:grid;grid-template-columns:minmax(220px,35%) minmax(0,65%);background:#fffaf0;border-radius:8px 18px 18px 8px;box-shadow:10px 18px 35px #443b3040;min-height:78dvh;overflow:hidden;border:1px solid #cdbda3}
+.book-pages>aside{padding:25px 20px;background:linear-gradient(90deg,#eee4d0,#fbf4e5);border-right:3px solid #d6c7ae;box-shadow:inset -9px 0 12px #6e594311}
+.book-pages>aside h2{font-size:25px}
+.book-pages>aside p{line-height:1.5}
+.book-pages>aside nav{display:flex;flex-direction:column;overflow:visible;background:transparent;border:0;padding:0;gap:8px}
+.book-pages>aside nav button{text-align:left;white-space:normal;border-radius:9px;padding:12px;background:#fff9ed}
+.book-pages>aside nav button.active{background:#778b70;color:white}
+.book-pages>article{min-width:0;background:linear-gradient(90deg,#f1e8d8,#fffaf0 4%);}
+.book-pages>article header{padding:20px 16px;background:transparent}
+.book-pages>article header h1{font-size:clamp(25px,4vw,39px)}
+.book-pages>article main{padding:20px 24px 38px}
+.book-pages>article .panel{box-shadow:none}
+.book-pages>article .cards{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+#detailContent{line-height:1.65}
+@media(max-width:650px){.book-shell{padding:8px}.book-pages{grid-template-columns:1fr}.book-pages>aside{border-right:0;border-bottom:2px solid #d6c7ae;padding:14px}.book-pages>aside nav{flex-direction:row;overflow:auto}.book-pages>aside nav button{white-space:nowrap}.book-pages>aside h2,.book-pages>aside p{display:none}.book-pages>article main{padding:16px}.cover-face{min-height:76dvh}}
 </style>
 </head>
 <body><div class="app">
+<div id="bookCover" class="book-cover"><button class="cover-face" onclick="openBook()" aria-label="Apri il quaderno delle idee"><span class="cover-ornament">✿ ❧ ✿</span><h1>Il quaderno delle idee</h1><div class="subtitle">Tutte le ricette che dimentico</div><span class="cover-ornament">❦</span><span class="open-hint">Tocca per aprire il libro</span><span class="author">Isabel Sacco</span></button></div>
+<div id="bookShell" class="book-shell"><div class="book-toolbar"><button onclick="closeBook()">← Chiudi il libro</button><span class="book-name">❧ Il quaderno delle idee ❧</span><span>✿</span></div><div class="book-pages"><aside><h2>Indice del quaderno</h2><p class="muted">Scegli dove sfogliare il tuo ricettario.</p>
 <header><div class="wheat">❧</div><div class="eyebrow">Il mio ricettario personale</div><h1>Il quaderno delle idee</h1><div class="subtitle">Tutte le ricette che dimentico</div><div class="wheat">✳</div></header>
 <nav>
 <button class="active" data-tab="home">⌂ Inizio</button><button data-tab="recipes">▤ Ricette</button><button data-tab="search">⌕ Cerca ingredienti</button><button data-tab="add">＋ Nuova ricetta</button><button data-tab="backup">⇧ Copie di sicurezza</button>
-</nav>
+</nav></aside><article>
 <main>
 <section id="home">
 <h2>Benvenuta nella tua cucina</h2>
@@ -72,8 +111,10 @@ small{font:12px Arial;color:var(--muted)}
 <small>* Campi necessari per poter salvare e cercare la ricetta.</small></form></section>
 <section id="detail" class="hidden"><button class="action" onclick="showTab('recipes')">← Torna all'indice</button><div id="detailContent" class="panel" style="margin-top:14px"></div></section>
 <section id="backup" class="hidden"><h2>Il cassetto dei ricordi</h2><div class="panel"><h3>Esporta il tuo ricettario</h3><p class="muted">Crea una copia di sicurezza con tutte le ricette e le eventuali fotografie. Conservala nell'app File dell'iPad.</p><button class="primary action" onclick="exportData()">Scarica copia di sicurezza</button></div><div class="panel"><h3>Ripristina una copia</h3><p class="muted">Importa un file JSON esportato in precedenza. Le ricette importate si aggiungeranno a quelle presenti.</p><input type="file" id="importFile" accept=".json,application/json"><button class="action" style="margin-top:12px" onclick="importData()">Importa ricette</button></div><div class="panel"><h3>Un piccolo promemoria</h3><p class="muted">I dati sono salvati nel browser su questo dispositivo. Non cancellare i dati del sito/browser senza prima esportare una copia. Per maggiore sicurezza, fai periodicamente un backup.</p></div></section>
-</main></div><div id="toast"></div>
+</main></article></div></div></div><div id="toast"></div>
 <script>
+function openBook(){document.getElementById('bookCover').style.display='none';document.getElementById('bookShell').classList.add('open');window.scrollTo(0,0)}
+function closeBook(){document.getElementById('bookShell').classList.remove('open');document.getElementById('bookCover').style.display='flex';window.scrollTo(0,0)}
 const KEY='quadernoIdeeRecipes_v1'; let recipes=[];
 const $=id=>document.getElementById(id);
 function load(){try{recipes=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){recipes=[]}renderHome()}
