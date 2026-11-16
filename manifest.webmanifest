@@ -1,0 +1,10 @@
+{
+  "name": "Il quaderno delle idee",
+  "short_name": "Il mio quaderno",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5eedf",
+  "theme_color": "#efe5d2",
+  "description": "Tutte le ricette che dimentico"
+}
