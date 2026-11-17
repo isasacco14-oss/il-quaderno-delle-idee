@@ -47,4 +47,7 @@ $('clear').onclick=()=>{if(confirm('Svuotare il calendario e la lista di questa 
 $('resetChecks').onclick=()=>{state().checked=[];save();renderShopping()};
 $('copy').onclick=async()=>{const text='Lista della spesa · '+$('weekTitle').textContent+'\n'+shoppingItems().map(x=>(state().checked.includes(x.key)?'☑ ':'☐ ')+x.name).join('\n');try{await navigator.clipboard.writeText(text);$('status').textContent='✓ Lista copiata'}catch{$('status').textContent='La copia non è disponibile: seleziona gli elementi dalla pagina'}};
 render();
-</script></body></html>
+</script>
+<script src="./spesa-supermercati.js?v=1"></script>
+</body>
+</html>
