@@ -205,13 +205,39 @@
     input.addEventListener('input', aggiorna);
     check.addEventListener('change', aggiorna);
     chiudi.onclick = () => sfondo.remove();
+    const applica = document.createElement('button');
+applica.type = 'button';
+applica.textContent = '✿ Applica le quantità ✿';
+applica.className = 'action';
+
+applica.onclick = () => {
+  const porzioni = Number(input.value);
+  if (!Number.isFinite(porzioni) || porzioni <= 0 || porzioni > 100) {
+    alert('Inserisci un numero di porzioni valido.');
+    return;
+  }
+
+  const fattore = porzioni / base;
+  const ingredienti = originali.map(ingrediente =>
+    convertiIngrediente(ingrediente, fattore, check.checked).testo
+  );
+
+  sessionStorage.setItem('quadernoPorzioniTemporanee_v1', JSON.stringify({
+    ricettaId: id,
+    porzioni: porzioni,
+    ingredienti: ingredienti
+  }));
+
+  alert('🌷 Quantità applicate! Ora puoi iniziare a cucinare.');
+  sfondo.remove();
+};
     sfondo.onclick = e => {
       if (e.target === sfondo) sfondo.remove();
     };
 
     pannello.append(
       titolo, descrizione, etichetta, input,
-      opzione, lista, avviso, chiudi
+      opzione, lista, avviso, applica, chiudi
     );
     sfondo.append(pannello);
     document.body.append(sfondo);
