@@ -286,8 +286,10 @@ function renderIndiceCategorie(){
 
     pulsante.onclick = () => {
  
+
+
 function openRecipe(id){
-  let r=recipes.find(x=>x.id===id);
+  let r=recipes.find(x=>String(x.id)===String(id));
   if(!r)return;
 
   showTab('detail');
@@ -297,7 +299,7 @@ function openRecipe(id){
 
     <h2>${esc(r.name)}</h2>
 
-    <p>✿ ${esc(r.servings||'Porzioni non indicate')} persone ✿</p>
+    <p>✿ ${r.servings?esc(r.servings)+' persone':'Porzioni non indicate'} ✿</p>
 
     <button class="action" type="button" onclick="apriConvertitore('${r.id}')">
       ✿ Adatta le quantità ✿
