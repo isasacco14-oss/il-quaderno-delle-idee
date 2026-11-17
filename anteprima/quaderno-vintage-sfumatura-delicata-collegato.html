@@ -307,7 +307,9 @@ $('recipeForm').onsubmit=async e=>{e.preventDefault();let id=$('recipeId').value
 function exportData(){let blob=new Blob([JSON.stringify({app:'Il quaderno delle idee',version:1,recipes},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='il-quaderno-delle-idee-backup.json';a.click();URL.revokeObjectURL(a.href);toast('Copia di sicurezza pronta')}
 function importData(){let f=$('importFile').files[0];if(!f){toast('Scegli prima un file JSON');return}let rd=new FileReader();rd.onload=()=>{try{let data=JSON.parse(rd.result),incoming=Array.isArray(data)?data:data.recipes;if(!Array.isArray(incoming))throw Error();let ids=new Set(recipes.map(r=>r.id));incoming.forEach(r=>{if(r.name&&Array.isArray(r.ingredients)){if(ids.has(r.id))r.id='r'+Date.now()+Math.random().toString(16).slice(2);recipes.push(r)}});save();toast('Ricette importate!')}catch(e){toast('File non valido o non riconosciuto')}};rd.readAsText(f)}
 load();
-</script><script>
+</script>
+<script src="./convertitore-quantita.js?v=1"></script>
+<script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 }
