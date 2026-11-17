@@ -10,7 +10,49 @@ function getProgress(){try{let x=JSON.parse(localStorage.getItem(PROGRESS_KEY)||
 function saveProgress(){try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress))}catch{}}
 const recipes=getArray();let progress=getProgress(),current=null,steps=[],index=0,completed=[],elapsed=0,startedAt=0,running=false;
 function splitSteps(method){let t=String(method||'').trim();if(!t)return ['Il procedimento non è ancora stato scritto per questa ricetta.'];let lines=t.split(/\n+/).map(x=>x.trim()).filter(Boolean);if(lines.length>1)return lines.map(x=>x.replace(/^\s*(?:\d+[.)-]|[-•])\s*/,''));let numbered=t.split(/(?=\b\d+[.)]\s+)/).map(x=>x.trim()).filter(Boolean);if(numbered.length>1)return numbered.map(x=>x.replace(/^\d+[.)]\s*/,''));return [t]}
-function showRecipe(id){let r=recipes.find(x=>String(x.id)===String(id));if(!r)return;current=r;steps=splitSteps(r.method);let saved=progress[r.id]||{};index=Math.min(Math.max(0,Number(saved.index)||0),steps.length-1);completed=Array.isArray(saved.completed)?saved.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<steps.length):[];elapsed=0;running=false;$('recipeTitle').textContent=r.name||'Senza titolo';$('recipeMeta').textContent=[r.category,r.time?r.time+' minuti':''].filter(Boolean).join(' · ');$('ingredients').replaceChildren();(Array.isArray(r.ingredients)?r.ingredients:[]).forEach(x=>{let li=document.createElement('li');li.textContent=x;$('ingredients').append(li)});$('empty').classList.add('hidden');$('recipeArea').classList.remove('hidden');$('workArea').classList.remove('hidden');$('workEmpty').classList.add('hidden');$('picker').value=String(r.id);render()}
+function showRecipe(id){
+  let r=recipes.find(x=>String(x.id)===String(id));
+  if(!r)return;
+
+  current=r;
+  steps=splitSteps(r.method);
+
+  let saved=progress[r.id]||{};
+  index=Math.min(Math.max(0,Number(saved.index)||0),steps.length-1);
+  completed=Array.isArray(saved.completed)?saved.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<steps.length):[];
+
+  elapsed=0;
+  running=false;
+
+  $('recipeTitle').textContent=r.name||'Senza titolo';
+  $('recipeMeta').textContent=[r.category,r.time?r.time+' minuti':''].filter(Boolean).join(' · ');
+
+  let ingredienti=Array.isArray(r.ingredients)?r.ingredients:[];
+
+  try{
+    const dati=JSON.parse(sessionStorage.getItem('quadernoPorzioniTemporanee_v1')||'null');
+    if(dati && String(dati.ricettaId)===String(r.id) && Array.isArray(dati.ingredienti)){
+      ingredienti=dati.ingredienti;
+      $('recipeMeta').textContent+=' · '+dati.porzioni+' porzioni';
+    }
+  }catch(e){}
+
+  $('ingredients').replaceChildren();
+  ingredienti.forEach(x=>{
+    let li=document.createElement('li');
+    li.textContent=x;
+    $('ingredients').append(li);
+  });
+
+  $('empty').classList.add('hidden');
+  $('recipeArea').classList.remove('hidden');
+  $('workArea').classList.remove('hidden');
+  $('workEmpty').classList.add('hidden');
+  $('picker').value=String(r.id);
+
+  render();
+}
+  
 function persist(){if(!current)return;progress[current.id]={index,completed};saveProgress()}
 function render(){if(!current)return;$('progress').textContent='Passaggio '+(index+1)+' di '+steps.length+' · '+completed.length+' completati';$('step').textContent=steps[index];$('complete').textContent=completed.includes(index)?'✓ Completato':'○ Segna come fatto';$('complete').classList.toggle('done',completed.includes(index));$('prev').disabled=index===0;$('next').disabled=index===steps.length-1;renderClock()}
 $('prev').onclick=()=>{if(index>0){index--;persist();render()}};$('next').onclick=()=>{if(index<steps.length-1){index++;persist();render()}};$('complete').onclick=()=>{if(completed.includes(index))completed=completed.filter(n=>n!==index);else completed.push(index);persist();render()};
