@@ -181,6 +181,7 @@ button.action,button.primary,.pill,.actions button{color:#604632!important}
 </main></article></div></div></div><div id="toast"></div>
 <script>
 function openBook(){document.getElementById('bookCover').style.display='none';document.getElementById('bookShell').classList.add('open');window.scrollTo(0,0)}
+if (sessionStorage.getItem('tornaAlLibro') === 'si') {openBook(); sessionStorage.removeItem('tornaAlLibro');}
 function closeBook(){document.getElementById('bookShell').classList.remove('open');document.getElementById('bookCover').style.display='flex';window.scrollTo(0,0)}
 const KEY='quadernoIdeeRecipes_v1'; let recipes=[];
 const $=id=>document.getElementById(id);
