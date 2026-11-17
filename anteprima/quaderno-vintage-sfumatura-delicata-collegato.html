@@ -140,6 +140,58 @@ button.primary{color:#566b48!important}
 input:not([type=checkbox]):not([type=file]),textarea,select{background:rgba(255,250,239,.48)!important;color:#513b2b!important}
 button.action,button.primary,.pill,.actions button{color:#604632!important}
 @media(max-width:650px){.book-pages>aside nav{padding:7px!important}.book-pages>article main{margin:7px!important;padding:15px!important}.book-pages>article header{margin:7px 7px 0!important}}
+
+/* Indice a doppia pagina */
+.indice-introduzione {
+  text-align: center;
+  font-style: italic;
+  margin: 12px 0 22px;
+  color: #765a42;
+}
+
+.indice-pagine {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: stretch;
+}
+
+.indice-pagina {
+  min-width: 0;
+  min-height: 420px;
+  padding: 24px 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 250, 235, 0.35),
+    rgba(221, 195, 153, 0.14)
+  );
+  border: 1px solid rgba(125, 91, 55, 0.22);
+  box-shadow: inset 0 0 25px rgba(115, 83, 49, 0.07);
+}
+
+.indice-sinistra {
+  border-radius: 8px 2px 2px 8px;
+  box-shadow: inset -7px 0 14px rgba(90, 61, 35, 0.09);
+}
+
+.indice-destra {
+  border-radius: 2px 8px 8px 2px;
+  box-shadow: inset 7px 0 14px rgba(90, 61, 35, 0.09);
+}
+
+.indice-pagina h3 {
+  text-align: center;
+  font-style: italic;
+  color: #79583c;
+  margin: 0 0 20px;
+}
+
+@media (max-width: 600px) {
+  .indice-pagine {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 <body><div class="app">
@@ -162,7 +214,18 @@ button.action,button.primary,.pill,.actions button{color:#604632!important}
 </div>
 <h2>Le ultime aggiunte</h2><div id="recent" class="cards"></div>
 </section>
-<section id="recipes" class="hidden"><h2>Il mio indice</h2><div class="row"><input id="listFilter" placeholder="Filtra per nome…"><select id="categoryFilter"><option value="">Tutte le categorie</option></select></div><div class="filterline"><select id="countryFilter"><option value="">Tutte le nazionalità</option></select><select id="starFilter"><option value="">Tutte le stelle</option><option value="1">★ 1 stella</option><option value="2">★★ 2 stelle</option><option value="3">★★★ 3 stelle</option><option value="4">★★★★ 4 stelle</option><option value="5">★★★★★ 5 stelle</option></select><select id="healthFilter"><option value="">Qualsiasi valutazione nutrizionale</option><option value="7">Da 7/10 in su</option><option value="8">Da 8/10 in su</option><option value="9">Da 9/10 in su</option></select><select id="tagFilter"><option value="">Tutte le etichette</option><option>Zero sbatti</option><option>Da provare</option></select></div><div id="recipeList" class="cards" style="margin-top:14px"></div></section>
+<section id="recipes" class="hidden"><h2>✿ L'indice del mio Quaderno ✿</h2><div class="indice-introduzione">Sfoglia le categorie e ritrova le tue ricette preferite.</div><div class="row"><input id="listFilter" placeholder="Filtra per nome…"><select id="categoryFilter"><option value="">Tutte le categorie</option></select></div><div class="filterline"><select id="countryFilter"><option value="">Tutte le nazionalità</option></select><select id="starFilter"><option value="">Tutte le stelle</option><option value="1">★ 1 stella</option><option value="2">★★ 2 stelle</option><option value="3">★★★ 3 stelle</option><option value="4">★★★★ 4 stelle</option><option value="5">★★★★★ 5 stelle</option></select><select id="healthFilter"><option value="">Qualsiasi valutazione nutrizionale</option><option value="7">Da 7/10 in su</option><option value="8">Da 8/10 in su</option><option value="9">Da 9/10 in su</option></select><select id="tagFilter"><option value="">Tutte le etichette</option><option>Zero sbatti</option><option>Da provare</option><div class="indice-pagine">
+  <div class="indice-pagina indice-sinistra">
+    <h3>✿ Le mie categorie ✿</h3>
+    <div id="indiceCategorie"></div>
+  </div>
+  <div class="indice-pagina indice-destra">
+    <h3>✿ Le mie ricette ✿</h3>
+    <div id="recipeList" class="cards"></div>
+  </div>
+  </div>
+</div>
+</section>
 <section id="search" class="hidden"><h2>Cosa hai in dispensa?</h2><p class="muted">Scrivi gli ingredienti separati da virgole. Puoi cercare ricette che ne contengono almeno uno oppure tutti.</p><input id="ingredientQuery" placeholder="Es. uova, zucchine, ricotta"><label style="display:flex;align-items:center;gap:8px"><input id="matchAll" type="checkbox" style="width:auto"> Mostra solo ricette con tutti gli ingredienti</label><div id="ingredientResults" class="cards" style="margin-top:16px"></div></section>
 <section id="add" class="hidden"><h2 id="formTitle">Una nuova ricetta</h2><form id="recipeForm">
 <input type="hidden" id="recipeId">
@@ -189,11 +252,48 @@ $('starButtons').innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-value=
 function load(){try{recipes=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){recipes=[]}renderHome()}
 function save(){localStorage.setItem(KEY,JSON.stringify(recipes));renderHome()}
 function toast(s){let t=$('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
-function showTab(tab){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));$(tab).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='recipes')renderList();if(tab==='search')renderIngredientSearch();window.scrollTo(0,0)}
+function showTab(tab){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));$(tab).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='recipes'){renderList();renderIndiceCategorie();}if(tab==='search')renderIngredientSearch();window.scrollTo(0,0)}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function card(r){return `<article class="recipe">${r.photo?`<img src="${r.photo}" alt="" style="width:100%;height:145px;object-fit:cover">`:''}<div class="body"><h3>${esc(r.name)}</h3><span class="tag">${esc(r.category)}</span>${r.time?`<span class="tag">${r.time} min</span>`:''}${r.favorite?'<span class="tag">♥ Preferita</span>':''}${r.country?`<span class="tag">🌍 ${esc(r.country)}</span>`:''}${r.stars?`<span class="tag">${'★'.repeat(Math.min(5,Math.max(0,Number(r.stars)||0)))}</span>`:''}${r.health?`<span class="tag">🌿 ${esc(r.health)}/10</span>`:''}${(r.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<div class="actions"><button class="action" onclick="openRecipe('${r.id}')">Apri</button><button class="action" onclick="toggleFav('${r.id}')">${r.favorite?'♥':'♡'}</button></div></div></article>`}
 function renderHome(){$('count').textContent=recipes.length;$('favCount').textContent=recipes.filter(r=>r.favorite).length;$('recent').innerHTML=recipes.length?recipes.slice().reverse().slice(0,4).map(card).join(''):'<div class="empty">Il quaderno è ancora vuoto. La prima ricetta aspetta solo te! ✿</div>'}
+function renderIndiceCategorie(){
+  const contenitore = document.getElementById('indiceCategorie');
+  const filtro = document.getElementById('categoryFilter');
+  if (!contenitore || !filtro) return;
+
+  const categorie = [...new Set(
+    recipes.map(r => r.category).filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b, 'it'));
+
+  contenitore.replaceChildren();
+
+  const tutte = ['Tutte le ricette', ...categorie];
+
+  tutte.forEach((nome, indice) => {
+    const categoria = indice === 0 ? '' : nome;
+    const pulsante = document.createElement('button');
+    pulsante.type = 'button';
+    pulsante.className = 'action';
+    pulsante.textContent = '✿ ' + nome;
+    pulsante.style.display = 'block';
+    pulsante.style.width = '100%';
+    pulsante.style.marginBottom = '12px';
+    pulsante.style.textAlign = 'left';
+
+    if (filtro.value === categoria) {
+      pulsante.style.fontWeight = 'bold';
+    }
+
+    pulsante.onclick = () => {
+      filtro.value = categoria;
+      renderList();
+      renderIndiceCategorie();
+    };
+
+    contenitore.appendChild(pulsante);
+  });
+}
 function renderList(){let cats=[...new Set(recipes.map(r=>r.category).filter(Boolean))];let previousCat=$('categoryFilter').value;$('categoryFilter').innerHTML='<option value="">Tutte le categorie</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('categoryFilter').value=previousCat;let countries=[...new Set(recipes.map(r=>r.country).filter(Boolean))].sort();let previousCountry=$('countryFilter').value;$('countryFilter').innerHTML='<option value="">Tutte le nazionalità</option>'+countries.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('countryFilter').value=previousCountry;let q=$('listFilter').value.toLowerCase(),cat=$('categoryFilter').value,country=$('countryFilter').value,stars=$('starFilter').value,health=$('healthFilter').value,tag=$('tagFilter').value;let arr=recipes.filter(r=>(!cat||r.category===cat)&&r.name.toLowerCase().includes(q)&&(!country||r.country===country)&&(!stars||Number(r.stars)===Number(stars))&&(!health||Number(r.health)>=Number(health))&&(!tag||(r.tags||[]).includes(tag)));$('recipeList').innerHTML=arr.length?arr.slice().reverse().map(card).join(''):'<div class="empty">Nessuna ricetta trovata con questi filtri.</div>'}
 $('listFilter').oninput=renderList;$('categoryFilter').onchange=renderList;['countryFilter','starFilter','healthFilter','tagFilter'].forEach(id=>$(id).onchange=renderList);
 function quickGo(){$('ingredientQuery').value=$('quickSearch').value;showTab('search');renderIngredientSearch()}
