@@ -285,21 +285,27 @@ function renderIndiceCategorie(){
     }
 
     pulsante.onclick = () => {
- 
+      filtro.value = categoria;
+      renderList();
+      renderIndiceCategorie();
+    };
 
+    contenitore.appendChild(pulsante);
+  });
+}
 
-function openRecipe(id){
-  let r=recipes.find(x=>String(x.id)===String(id));
-  if(!r)return;
+function openRecipe(id) {
+  const r = recipes.find(x => String(x.id) === String(id));
+  if (!r) return;
 
   showTab('detail');
 
-  $('detailContent').innerHTML=`
-    ${r.photo?`<img src="${r.photo}" style="width:100%;max-height:220px;object-fit:cover;border-radius:12px">`:''}
+  $('detailContent').innerHTML = `
+    ${r.photo ? `<img src="${r.photo}" style="width:100%;max-height:220px;object-fit:cover;border-radius:12px">` : ''}
 
     <h2>${esc(r.name)}</h2>
 
-    <p>✿ ${r.servings?esc(r.servings)+' persone':'Porzioni non indicate'} ✿</p>
+    <p>✿ ${r.servings ? esc(r.servings) + ' persone' : 'Porzioni non indicate'} ✿</p>
 
     <button class="action" type="button" onclick="apriConvertitore('${r.id}')">
       ✿ Adatta le quantità ✿
@@ -311,20 +317,12 @@ function openRecipe(id){
 
     <div class="actions">
       <button class="action" onclick="toggleFav('${r.id}');openRecipe('${r.id}')">
-        ${r.favorite?'♥ Togli dai preferiti':'♡ Aggiungi ai preferiti'}
+        ${r.favorite ? '♥ Togli dai preferiti' : '♡ Aggiungi ai preferiti'}
       </button>
       <button class="action" onclick="editRecipe('${r.id}')">Modifica</button>
       <button class="action" onclick="deleteRecipe('${r.id}')">Elimina</button>
     </div>
   `;
-}
-     filtro.value = categoria;
-      renderList();
-      renderIndiceCategorie();
-    };
-
-    contenitore.appendChild(pulsante);
-  });
 }
 function renderList(){let cats=[...new Set(recipes.map(r=>r.category).filter(Boolean))];let previousCat=$('categoryFilter').value;$('categoryFilter').innerHTML='<option value="">Tutte le categorie</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('categoryFilter').value=previousCat;let countries=[...new Set(recipes.map(r=>r.country).filter(Boolean))].sort();let previousCountry=$('countryFilter').value;$('countryFilter').innerHTML='<option value="">Tutte le nazionalità</option>'+countries.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('countryFilter').value=previousCountry;let q=$('listFilter').value.toLowerCase(),cat=$('categoryFilter').value,country=$('countryFilter').value,stars=$('starFilter').value,health=$('healthFilter').value,tag=$('tagFilter').value;let arr=recipes.filter(r=>(!cat||r.category===cat)&&r.name.toLowerCase().includes(q)&&(!country||r.country===country)&&(!stars||Number(r.stars)===Number(stars))&&(!health||Number(r.health)>=Number(health))&&(!tag||(r.tags||[]).includes(tag)));$('recipeList').innerHTML=arr.length?arr.slice().reverse().map(card).join(''):'<div class="empty">Nessuna ricetta trovata con questi filtri.</div>'}
 $('listFilter').oninput=renderList;$('categoryFilter').onchange=renderList;['countryFilter','starFilter','healthFilter','tagFilter'].forEach(id=>$(id).onchange=renderList);
